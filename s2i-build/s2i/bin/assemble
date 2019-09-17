@@ -1,0 +1,40 @@
+#!/bin/sh -e
+#
+# S2I assemble script for the 'rails' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+# If the 'rails' assemble script is executed with the '-h' flag, print the usage.
+export RAILS_TMP=/cache
+
+if [[ "$1" == "-h" ]]; then
+	exec /usr/libexec/s2i/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
+  echo "---> Restoring build artifacts..."
+  mv /tmp/artifacts/. ./
+fi
+
+echo "---> Installing application source..."
+cp -Rf /tmp/src/. ./
+
+echo "---> Building application from source..."
+
+find /app -name .git -type d -exec rm -rf {} +
+
+fix-permissions /app/tmp
+
+yarn install
+
+bundle config --global frozen 1 \
+    && bundle install -j4 --retry 3
+
+bundle exec rake assets:precompile
+
+# cleanup yarn and other stuff
