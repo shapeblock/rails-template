@@ -9,11 +9,11 @@ metadata:
     iconClass: icon-rails
     openshift.io/display-name: Rails
     openshift.io/long-description: This template defines resources needed to develop an Alpine based Rails 6 setup running on Ruby 2.6 and Nginx. It also includes resources required to create a PostgreSQL instance.
-    tags: quickstart,ruby,rails
+    tags: quickstart,ruby,rails,shapeblock
     template.openshift.io/bindable: "false"
-labels:
-  template: rails
-  app: ${NAME}
+  labels:
+    template: node
+    from: shapeblock
 objects:
 - apiVersion: v1
   kind: DeploymentConfig
@@ -21,19 +21,11 @@ objects:
     name: ${NAME}
     labels:
       type: app
+      stack: rails
   spec:
     replicas: 1
     selector:
       app: ${NAME}
-    strategy:
-      recreateParams:
-        pre:
-          execNewPod:
-            command:
-            - RAILS_ENV=production bundle exec rake db:migrate
-            containerName: rails
-          failurePolicy: Abort
-      type: Recreate
     template:
       metadata:
         labels:
@@ -79,8 +71,6 @@ objects:
   kind: Service
   metadata:
     name: ${NAME}
-    labels:
-      type: app
   spec:
     selector:
       app: ${NAME}
@@ -92,8 +82,6 @@ objects:
   kind: Secret
   metadata:
     name: ${NAME}-db-secret
-    labels:
-      app: ${NAME}
   stringData:
     database-user: ${POSTGRES_USER}
     database-password: ${POSTGRES_PASSWORD}
