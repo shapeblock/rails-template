@@ -5,7 +5,9 @@ message: |-
 metadata:
   name: rails
   annotations:
-    description: An example Ruby 2.6 Rails application running on Alpine Linux with a PostgreSQL database. 
+    description: Rails + Postgres, Ruby 2.6
+    repo: https://github.com/badri/rubyrails-tasks.git
+    icon: rails
     iconClass: icon-rails
     openshift.io/display-name: Rails
     openshift.io/long-description: This template defines resources needed to develop an Alpine based Rails 6 setup running on Ruby 2.6 and Nginx. It also includes resources required to create a PostgreSQL instance.
@@ -246,7 +248,7 @@ parameters:
   displayName: Git Repository URL
   name: SOURCE_REPOSITORY_URL
   required: true
-  value: https://github.com/badri/rails-okd-example.git
+  value: https://github.com/badri/rubyrails-tasks.git
 - description: Set this to a branch name, tag or other ref of your repository if you
     are not using the default branch.
   displayName: Git Reference
